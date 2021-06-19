@@ -1,5 +1,8 @@
 from datetime import datetime
 from threading import Timer
+from typing import OrderedDict
+
+URLs = OrderedDict()
 
 
 class Domain():
@@ -29,10 +32,10 @@ class Domain():
         return self._is_accessible
 
     def __hash__(self):
-        return None
+        return hash(self.nam_domain)
 
     def __eq__(self, domain):
-        return None
+        return self.nam_domain == domain
 
     def __str__(self):
         return self.nam_domain

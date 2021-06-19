@@ -3,11 +3,12 @@ from util.threads import synchronized
 from collections import OrderedDict
 from .domain import Domain
 
+
 class Scheduler():
-    #tempo (em segundos) entre as requisições
+    # tempo (em segundos) entre as requisições
     TIME_LIMIT_BETWEEN_REQUESTS = 20
 
-    def __init__(self,str_usr_agent,int_page_limit,int_depth_limit,arr_urls_seeds):
+    def __init__(self, str_usr_agent, int_page_limit, int_depth_limit, arr_urls_seeds):
         """
             Inicializa o escalonador. Atributos:
                 - `str_usr_agent`: Nome do `User agent`. Usualmente, é o nome do navegador, em nosso caso,  será o nome do coletor (usualmente, terminado em `bot`)
@@ -27,7 +28,6 @@ class Scheduler():
         self.set_discovered_urls = set()
         self.dic_robots_per_domain = {}
 
-
     @synchronized
     def count_fetched_page(self):
         """
@@ -43,31 +43,27 @@ class Scheduler():
             return True
         return False
 
-
     @synchronized
-    def can_add_page(self,obj_url,int_depth):
+    def can_add_page(self, obj_url, int_depth):
         """
-            Retorna verdadeiro caso  profundade for menor que a maxima
+            Retorna verdadeiro caso  profundidade for menor que a maxima
             e a url não foi descoberta ainda
         """
-        return False
+        if (self.int_depth_limit <= int_depth or obj_url.geturl() in self.dic_url_per_domain):
+            return False
+
+        return True
 
     @synchronized
-    def add_new_page(self,obj_url,int_depth):
+    def add_new_page(self, obj_url, int_depth):
         """
             Adiciona uma nova página
             obj_url: Objeto da classe ParseResult com a URL a ser adicionada
             int_depth: Profundidade na qual foi coletada essa URL
         """
-        #https://docs.python.org/3/library/urllib.parse.html
+        # https://docs.python.org/3/library/urllib.parse.html
 
         return False
-
-
-
-
-
-
 
     @synchronized
     def get_next_url(self):
@@ -75,13 +71,11 @@ class Scheduler():
         Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        return None,None
+        return None, None
 
-    def can_fetch_page(self,obj_url):
+    def can_fetch_page(self, obj_url):
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
-
-
 
         return False

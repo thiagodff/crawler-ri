@@ -1,6 +1,5 @@
 from datetime import datetime
-import sched
-import time
+from threading import Timer
 
 
 class Domain():
@@ -15,23 +14,22 @@ class Domain():
         timedelta = datetime.now() - self.time_last_access
         return timedelta
 
-    def accessed_now(self):
-        def turn_server_accessible(self):
-            self._is_accessible = True
+    def turn_server_accessible(self):
+        self._is_accessible = True
 
-        s = sched.scheduler(time.time, time.sleep)
+    def accessed_now(self):
         self._is_accessible = False
 
-        s.enter(self.int_time_limit_seconds, 1,
-                turn_server_accessible, argument={self})
-        s.run()
+        r = Timer(self.int_time_limit_seconds, self.turn_server_accessible)
+        r.start()
+
         self.time_last_access = datetime.now()
 
     def is_accessible(self):
         return self._is_accessible
 
     def __hash__(self):
-        return 5
+        return None
 
     def __eq__(self, domain):
         return None

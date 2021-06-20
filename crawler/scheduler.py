@@ -1,4 +1,4 @@
-from datetime import time
+from datetime import time as t
 from urllib import robotparser
 from util.threads import synchronized
 from collections import OrderedDict
@@ -85,12 +85,12 @@ class Scheduler():
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
         for domain, urls in self.dic_url_per_domain.items():
-            if (self.dic_url_per_domain[domain] == []):
-                del self.dic_url_per_domain[domain]
-            else:
-                for url in urls:
-                    self.dic_url_per_domain[domain].pop()
-                    return url
+            # if (self.dic_url_per_domain[domain] == []):
+            #     del self.dic_url_per_domain[domain]
+            # else:
+            for url in urls:
+                self.dic_url_per_domain[domain].pop()
+                return url
 
         # time.sleep(1)
         # return self.get_next_url()

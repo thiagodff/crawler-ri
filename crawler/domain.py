@@ -1,8 +1,5 @@
 from datetime import datetime
 from threading import Timer
-from typing import OrderedDict
-
-URLs = OrderedDict()
 
 
 class Domain():

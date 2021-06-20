@@ -1,3 +1,4 @@
+from datetime import time
 from urllib import robotparser
 from util.threads import synchronized
 from collections import OrderedDict
@@ -63,15 +64,36 @@ class Scheduler():
         """
         # https://docs.python.org/3/library/urllib.parse.html
 
-        return False
+        if (not self.can_add_page(obj_url, int_depth)):
+            return False
+
+        # if (obj_url.geturl() not in self.dic_url_per_domain):
+        #     self.dic_url_per_domain[obj_url.geturl()] = []
+
+        self.dic_url_per_domain[obj_url.geturl()] = [(obj_url, int_depth)]
+        self.set_discovered_urls.add(obj_url.geturl())
+
+        # self.dic_url_per_domain = OrderedDict(
+        #     sorted(self.dic_url_per_domain.items(), key=lambda t: t[0]))
+
+        return True
 
     @synchronized
     def get_next_url(self):
         """
-        Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
+        Obtêm uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        return None, None
+        for domain, urls in self.dic_url_per_domain.items():
+            if (self.dic_url_per_domain[domain] == []):
+                del self.dic_url_per_domain[domain]
+            else:
+                for url in urls:
+                    self.dic_url_per_domain[domain].pop()
+                    return url
+
+        # time.sleep(1)
+        # return self.get_next_url()
 
     def can_fetch_page(self, obj_url):
         """

@@ -1,23 +1,25 @@
 from bs4 import BeautifulSoup
 from threading import Thread
 import requests
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urljoin, ParseResult
 
 
 class PageFetcher(Thread):
+
+    USER_AGENT = 'bot_rachadores'
+
     def __init__(self, obj_scheduler):
         super().__init__()
         self.obj_scheduler = obj_scheduler
 
-    def request_url(self, obj_url):
+    def request_url(self, obj_url: ParseResult):
         """
             Faz a requisição e retorna o conteúdo em binário da URL passada como parametro
 
             obj_url: Instancia da classe ParseResult com a URL a ser requisitada.
         """
-        response = None
-
-        return response.content
+        response = requests.get(url=obj_url.geturl(), headers={'User-Agent': PageFetcher.USER_AGENT})
+        return response.content if 'text/html' in response.headers['Content-Type'] else None
 
     def discover_links(self, obj_url, int_depth, bin_str_content):
         """

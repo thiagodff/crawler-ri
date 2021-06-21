@@ -86,16 +86,15 @@ class Scheduler:
         sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
         return None, None
 
-    def can_fetch_page(self, obj_url):
+    def can_fetch_page(self, obj_url) -> bool:
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
         url = obj_url.geturl()
         url_p = urlparse(url)
-        if not url_p.netloc in self.dic_robots_per_domain.keys():
+        if not (url_p.netloc in self.dic_robots_per_domain.keys()):
             rp = robotparser.RobotFileParser()
             rp.set_url(url)
             rp.read()
             self.dic_robots_per_domain[url_p.netloc] = rp.can_fetch("*", url)
-            
         return self.dic_robots_per_domain[url_p.netloc]

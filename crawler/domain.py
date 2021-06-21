@@ -19,7 +19,7 @@ class Domain:
     def accessed_now(self) -> None:
         self.__accessible = False
         self.time_last_access = datetime.now()
-        Timer(self.int_time_limit_seconds, self.__turn_server_accessible).start()
+        Timer(interval=self.int_time_limit_seconds, function=self.__turn_server_accessible).start()
 
     def is_accessible(self) -> bool:
         return self.__accessible

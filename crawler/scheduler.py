@@ -55,7 +55,8 @@ class Scheduler:
             Retorna verdadeiro caso  profundidade for menor que a maxima
             e a url não foi descoberta ainda
         """
-        return self.int_depth_limit > depth and not (obj_url.hostname in self.dic_url_per_domain)
+        domain = Domain(obj_url.hostname, Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
+        return self.int_depth_limit > depth and not (domain in self.dic_url_per_domain)
 
     @synchronized
     def add_new_page(self, obj_url: ParseResult, depth: int) -> bool:
@@ -67,8 +68,12 @@ class Scheduler:
         # https://docs.python.org/3/library/urllib.parse.html
         if not self.can_add_page(obj_url, depth):
             return False
-        self.dic_url_per_domain[obj_url.hostname] = [(obj_url, depth)]
-        self.set_discovered_urls.add(obj_url.hostname)
+        domain = Domain(obj_url.hostname, Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
+        if not (domain in self.dic_url_per_domain):  # Se não existir ainda o domínio no dicionário
+            self.dic_url_per_domain[domain] = [(obj_url, depth)]  # Cria uma nova lista para aquele domíno
+        else:
+            self.dic_url_per_domain[domain].append((obj_url, depth))  # Adiciona na lista existente do domínio
+        self.set_discovered_urls.add(obj_url.geturl())
         return True
 
     @synchronized

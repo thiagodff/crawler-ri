@@ -1,7 +1,6 @@
 from time import sleep
 from urllib import robotparser
-from urllib.parse import ParseResult
-
+from urllib.parse import ParseResult, urlparse
 from util.threads import synchronized
 from collections import OrderedDict
 from .domain import Domain
@@ -87,9 +86,16 @@ class Scheduler:
         sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
         return None, None
 
-    def can_fetch_page(self, obj_url) -> bool:
+    def can_fetch_page(self, obj_url):
         """
         Verifica, por meio do robots.txt se uma determinada URL pode ser coletada
         """
-
-        return False
+        url = obj_url.geturl()
+        url_p = urlparse(url)
+        if not url_p.netloc in self.dic_robots_per_domain.keys():
+            rp = robotparser.RobotFileParser()
+            rp.set_url(url)
+            rp.read()
+            self.dic_robots_per_domain[url_p.netloc] = rp.can_fetch("*", url)
+            
+        return self.dic_robots_per_domain[url_p.netloc]

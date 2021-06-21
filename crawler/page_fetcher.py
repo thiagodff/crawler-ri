@@ -15,7 +15,6 @@ class PageFetcher(Thread):
 
             obj_url: Instancia da classe ParseResult com a URL a ser requisitada.
         """
-        response = None
 
         return response.content
 

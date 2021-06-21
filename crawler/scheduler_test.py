@@ -9,10 +9,12 @@ class DomainTest(unittest.TestCase):
 
     def test_domain(self):
         domain = Domain("xpto.com", 10)
-        self.assertTrue(domain.is_accessible(), "Ao iniciar um servidor, ele deve estar acessível")
+        self.assertTrue(domain.is_accessible(),
+                        "Ao iniciar um servidor, ele deve estar acessível")
 
         domain.accessed_now()
-        self.assertTrue(not domain.is_accessible(), "Como ele acabou de ser acessado, ele não pode estar acessivel")
+        self.assertTrue(not domain.is_accessible(
+        ), "Como ele acabou de ser acessado, ele não pode estar acessivel")
         print("Verificando acesso a um dominio já requisitado (após espera)")
         print("aguardando 10 segundos...")
         time.sleep(10)
@@ -29,7 +31,8 @@ class SchedulerTest(unittest.TestCase):
                                    arr_urls_seeds=arr_urls_seeds)
 
     def test_init(self):
-        arr_str_urls_seeds = ["cnn.com", "www.gq.com.au/", "www.huffingtonpost.com/"]
+        arr_str_urls_seeds = ["cnn.com",
+                              "www.gq.com.au/", "www.huffingtonpost.com/"]
         arr_urls_seeds = [urlparse(str_url) for str_url in arr_str_urls_seeds]
         self.assertEqual(3, 3, "Nao foi adicionado as sementes solicitadas")
 
@@ -52,7 +55,8 @@ class SchedulerTest(unittest.TestCase):
         urls = set()
         for key, arr in self.scheduler.dic_url_per_domain.items():
             set_urls = set(arr)
-            self.assertTrue(len(set_urls) == len(arr), "Existem URLs repetidas na fila!")
+            self.assertTrue(len(set_urls) == len(
+                arr), "Existem URLs repetidas na fila!")
 
         u1 = self.scheduler.get_next_url()
         u2 = self.scheduler.get_next_url()
@@ -64,7 +68,8 @@ class SchedulerTest(unittest.TestCase):
         arr_expected_order = [urlTerra[0], urlUOL1[0], urlGlobo[0]]
         arr_url_order = [u1[0], u2[0], u3[0]]
         for i, expected_url in enumerate(arr_expected_order):
-            self.assertTrue(arr_url_order[i] is not None, msg=f"A {i + 1}ª URL não deveria ser none")
+            self.assertTrue(
+                arr_url_order[i] is not None, msg=f"A {i + 1}ª URL não deveria ser none")
             self.assertEqual(expected_url, arr_url_order[i],
                              f"A URL {expected_url.geturl()} deveria ser a {i + 1}ª a ser obtida e foi a {arr_url_order[i].geturl()}.")
 
@@ -106,7 +111,8 @@ class SchedulerTest(unittest.TestCase):
         self.assertTrue(obj_robot_not_allowed == self.scheduler.dic_robots_per_domain[obj_url_not_allowed.netloc],
                         "Na segunda requisição de um mesmo dominio, você não pode criar um novo objeto RobotFileParser")
 
-        self.assertTrue(bol_allowed, f"O mesmo robots.txt não pode ser requisitado duas vezes.")
+        self.assertTrue(
+            bol_allowed, f"O mesmo robots.txt não pode ser requisitado duas vezes.")
 
 
 if __name__ == "__main__":

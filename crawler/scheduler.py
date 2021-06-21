@@ -31,6 +31,9 @@ class Scheduler:
         self.set_discovered_urls = set()
         self.dic_robots_per_domain = {}
 
+        for url in arr_urls_seeds:
+            self.add_new_page(url, 1)
+
     @synchronized
     def count_fetched_page(self):
         """

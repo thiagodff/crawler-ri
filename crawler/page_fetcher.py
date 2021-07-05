@@ -48,4 +48,5 @@ class PageFetcher(Thread):
         """
             Executa coleta enquanto houver páginas a serem coletadas
         """
-        pass
+        while self.obj_scheduler.has_finished_crawl() == False:
+            self.crawl_new_url()

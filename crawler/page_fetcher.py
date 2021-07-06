@@ -42,7 +42,16 @@ class PageFetcher(Thread):
         """
             Coleta uma nova URL, obtendo-a do escalonador
         """
-        pass
+        [url, depth] = self.obj_scheduler.get_next_url()
+
+        if url == None: return None
+
+        print(url)
+        response = self.request_url(self, url)
+
+        if response == None: return None
+
+        return self.discover_links(self, urlparse(url), depth, response)
 
     def run(self):
         """

@@ -27,12 +27,11 @@ class PageFetcher(Thread):
         Retorna os links do conteúdo bin_str_content da página já requisitada obj_url
         """
         soup = BeautifulSoup(bin_str_content, features="lxml")
-        new_url, new_depth = None, None
         for link in soup.select('a'):
             try:
                 aux_url = urlparse(link['href'])
             except KeyError:
-                break
+                yield None, None
             else:
                 if aux_url.hostname is None:
                     new_url = urlparse(obj_url.scheme + '://' +
@@ -40,7 +39,7 @@ class PageFetcher(Thread):
                 else:
                     new_url = aux_url
                 new_depth = 0 if obj_url.hostname != new_url.hostname else depth + 1
-        yield new_url, new_depth
+                yield new_url, new_depth
 
     def crawl_new_url(self) -> None:
         """
@@ -52,6 +51,7 @@ class PageFetcher(Thread):
             if response is not None:
                 for url, depth in self.discover_links(url, depth, response):
                     if url is not None:
+                        self.obj_scheduler.count_fetched_page()
                         print(f'URL: {url.geturl()}')
 
     def run(self):
@@ -60,4 +60,3 @@ class PageFetcher(Thread):
         """
         while not self.obj_scheduler.has_finished_crawl():
             self.crawl_new_url()
-            self.obj_scheduler.count_fetched_page()

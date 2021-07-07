@@ -23,8 +23,9 @@ page_fetchers = [PageFetcher(escalonador) for _ in range(5)]
 processos = []
 for fetcher in page_fetchers:
     p = Process(target=fetcher.run())
-    p.start()
-    processos.append(p)
+    if __name__ == '__main__':
+        p.start()
+        processos.append(p)
 
 # Finalizando os processos
 for processo in processos:

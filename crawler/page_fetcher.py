@@ -20,7 +20,8 @@ class PageFetcher(Thread):
 
             obj_url: Instancia da classe ParseResult com a URL a ser requisitada.
         """
-        response = requests.get(url=obj_url.geturl(), headers={'User-Agent': PageFetcher.USER_AGENT})
+        response = requests.get(url=obj_url.geturl(), headers={
+                                'User-Agent': PageFetcher.USER_AGENT})
         return response.content if 'text/html' in response.headers['Content-Type'] else None
 
     def discover_links(self, obj_url: ParseResult, depth: int, bin_str_content):
@@ -32,7 +33,8 @@ class PageFetcher(Thread):
         for link in soup.select('a'):
             aux_url = urlparse(link['href'])
             if aux_url.hostname is None:
-                new_url = urlparse(obj_url.scheme + '://' + obj_url.hostname + '/' + aux_url.path)
+                new_url = urlparse(obj_url.scheme + '://' +
+                                   obj_url.hostname + '/' + aux_url.path)
             else:
                 new_url = aux_url
             new_depth = 0 if obj_url.hostname != new_url.hostname else depth + 1
@@ -44,14 +46,16 @@ class PageFetcher(Thread):
         """
         [url, depth] = self.obj_scheduler.get_next_url()
 
-        if url == None: return None
+        if url == None:
+            return None
 
-        print(url)
-        response = self.request_url(self, url)
+        print(url.geturl())
+        response = self.request_url(url)
 
-        if response == None: return None
+        if response == None:
+            return None
 
-        return self.discover_links(self, urlparse(url), depth, response)
+        return self.discover_links(urlparse(url), depth, response)
 
     def run(self):
         """

@@ -31,31 +31,29 @@ class PageFetcher(Thread):
         soup = BeautifulSoup(bin_str_content, features="lxml")
 
         for link in soup.select('a'):
-            aux_url = urlparse(link['href'])
-            if aux_url.hostname is None:
-                new_url = urlparse(obj_url.scheme + '://' +
-                                   obj_url.hostname + '/' + aux_url.path)
+            try:
+                aux_url = urlparse(link['href'])
+            except KeyError:
+                pass
             else:
-                new_url = aux_url
-            new_depth = 0 if obj_url.hostname != new_url.hostname else depth + 1
-            yield new_url, new_depth
+                if aux_url.hostname is None:
+                    new_url = urlparse(obj_url.scheme + '://' +
+                                       obj_url.hostname + '/' + aux_url.path)
+                else:
+                    new_url = aux_url
+                new_depth = 0 if obj_url.hostname != new_url.hostname else depth + 1
+                yield new_url, new_depth
 
-    def crawl_new_url(self):
+    def crawl_new_url(self) -> None:
         """
             Coleta uma nova URL, obtendo-a do escalonador
         """
-        [url, depth] = self.obj_scheduler.get_next_url()
-
-        if url == None:
-            return None
-
-        print(url.geturl())
-        response = self.request_url(url)
-
-        if response == None:
-            return None
-
-        return self.discover_links(urlparse(url), depth, response)
+        url, depth = self.obj_scheduler.get_next_url()
+        if url is not None:
+            response = self.request_url(url)
+            if response is not None:
+                for url, depth in self.discover_links(url, depth, response):
+                    print(f'URL: {url.geturl()}')
 
     def run(self):
         """

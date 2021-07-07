@@ -44,9 +44,7 @@ class Scheduler:
         """
             Verifica se finalizou a coleta
         """
-        if self.int_page_count > self.int_page_limit:
-            return True
-        return False
+        return self.int_page_count > self.int_page_limit
 
     @synchronized
     def can_add_page(self, obj_url: ParseResult, depth: int) -> bool:

@@ -51,7 +51,8 @@ class PageFetcher(Thread):
             response = self.request_url(url)
             if response is not None:
                 for url, depth in self.discover_links(url, depth, response):
-                    print(f'URL: {url.geturl()}')
+                    if url is not None:
+                        print(f'URL: {url.geturl()}')
 
     def run(self):
         """
@@ -59,3 +60,4 @@ class PageFetcher(Thread):
         """
         while not self.obj_scheduler.has_finished_crawl():
             self.crawl_new_url()
+            self.obj_scheduler.count_fetched_page()

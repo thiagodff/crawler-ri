@@ -49,13 +49,13 @@ class PageFetcher(Thread):
         if url == None:
             return None
 
-        print(url.geturl())
-        response = self.request_url(url)
+        print(url)
+        response = self.request_url(self, url)
 
         if response == None:
             return None
 
-        return self.discover_links(urlparse(url), depth, response)
+        return self.discover_links(self, urlparse(url), depth, response)
 
     def run(self):
         """

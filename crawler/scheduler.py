@@ -53,7 +53,14 @@ class Scheduler:
             e a url não foi descoberta ainda
         """
         domain = Domain(obj_url.hostname, Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
-        return self.int_depth_limit > depth and not (domain in self.dic_url_per_domain)
+        try:
+            value = self.dic_url_per_domain[domain]
+        except KeyError:
+            pass
+        else:
+            if (obj_url, depth) in value:
+                return False
+        return self.int_depth_limit > depth
 
     @synchronized
     def add_new_page(self, obj_url: ParseResult, depth: int) -> bool:
@@ -76,16 +83,23 @@ class Scheduler:
     @synchronized
     def get_next_url(self) -> tuple:
         """
-        Obtem uma nova URL por meio da fila. Essa URL é removida da fila.
+        Obtém uma nova URL por meio da fila. Essa URL é removida da fila.
         Logo após, caso o servidor não tenha mais URLs, o mesmo também é removido.
         """
-        for key in self.dic_url_per_domain.keys():
-            if key.is_accessible():
-                domain = self.dic_url_per_domain[key]
-                if len(domain) > 0:
-                    return domain.pop(0)
+        for domain in self.dic_url_per_domain.keys():
+            if domain.is_accessible():
+                # Não extraia self.dic_url_per_domain[domain] para uma variável, pois essas modificações devem ser
+                # feitas por referência
+                if len(self.dic_url_per_domain[domain]) > 0:
+                    self.__acess_domain(domain)
+                    return self.dic_url_per_domain[domain].pop(0)
         sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
         return None, None
+
+    def __acess_domain(self, domain):
+        value = self.dic_url_per_domain[domain]
+        domain.accessed_now()
+        self.dic_url_per_domain[domain] = value
 
     def can_fetch_page(self, obj_url) -> bool:
         """

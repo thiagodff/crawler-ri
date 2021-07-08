@@ -47,13 +47,15 @@ class PageFetcher(Thread):
             Coleta uma nova URL, obtendo-a do escalonador
         """
         url, depth = self.obj_scheduler.get_next_url()
+        cont = 0
         if url is not None:
             response = self.request_url(url)
             if response is not None:
                 for url, depth in self.discover_links(url, depth, response):
                     if url is not None:
+                        cont += 1
                         self.obj_scheduler.count_fetched_page()
-                        print(f'URL: {url.geturl()}')
+                        print(f'URL[{cont}]: {url.geturl()}')
 
     def run(self):
         """

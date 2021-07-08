@@ -93,13 +93,13 @@ class Scheduler:
                 if len(self.dic_url_per_domain[domain]) > 0:
                     self.__acess_domain(domain)
                     return self.dic_url_per_domain[domain].pop(0)
+        sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
         return None, None
 
     def __acess_domain(self, domain):
         value = self.dic_url_per_domain[domain]
         domain.accessed_now()
         self.dic_url_per_domain[domain] = value
-        sleep(Scheduler.TIME_LIMIT_BETWEEN_REQUESTS)
 
     def can_fetch_page(self, obj_url) -> bool:
         """

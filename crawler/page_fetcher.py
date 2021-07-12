@@ -7,7 +7,7 @@ from crawler.scheduler import Scheduler
 
 
 class PageFetcher(Thread):
-    USER_AGENT = 'bot_rachadores'
+    USER_AGENT = 'amarelaoBot'
 
     def __init__(self, obj_scheduler: Scheduler):
         super().__init__()

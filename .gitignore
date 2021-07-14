@@ -5,3 +5,4 @@ embeddings.txt
 *.idx
 .ipynb_checkpoints
 .idea
+.DS_STORE
